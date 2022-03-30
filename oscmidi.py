@@ -52,7 +52,7 @@ class OscMidi(object):
 
         if address in self.mapping:
             control_change = [0xB0, self.mapping[address],
-                              round(args[0]*127) if args else 0]
+                              round(args[0] * 127) if args else 0]
             self.midiout.send_message(control_change)
             print("\t", address, args, " ==> ", control_change)
         else:
@@ -63,7 +63,8 @@ class OscMidi(object):
             json.dump(self.mapping, outfile, indent=2)
         del self.midiout
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip",
                         default="0.0.0.0",
@@ -87,8 +88,7 @@ if __name__ == "__main__":
                         help="Map new OSC paths to MIDI")
     args = parser.parse_args()
 
-    with OscMidi(args.midi, not args.no_learn, args.mapping_file_in,
-                 args.mapping_file_out) as oscmidi:
+    with OscMidi(args.midi, not args.no_learn, args.mapping_file_in, args.mapping_file_out) as oscmidi:
         dispatcher = dispatcher.Dispatcher()
         dispatcher.set_default_handler(oscmidi.send_message)
 
@@ -96,3 +96,7 @@ if __name__ == "__main__":
                                                   dispatcher)
         print("Serving OSC on {}".format(server.server_address))
         server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
