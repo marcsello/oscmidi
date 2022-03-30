@@ -89,11 +89,10 @@ def main():
     args = parser.parse_args()
 
     with OscMidi(args.midi, not args.no_learn, args.mapping_file_in, args.mapping_file_out) as oscmidi:
-        dispatcher = dispatcher.Dispatcher()
-        dispatcher.set_default_handler(oscmidi.send_message)
+        d = dispatcher.Dispatcher()
+        d.set_default_handler(oscmidi.send_message)
 
-        server = osc_server.ThreadingOSCUDPServer((args.ip, args.port),
-                                                  dispatcher)
+        server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), d)
         print("Serving OSC on {}".format(server.server_address))
         server.serve_forever()
 
